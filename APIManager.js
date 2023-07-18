@@ -72,8 +72,6 @@ class APIManager {
     return new Promise((resolve, reject) => {
       $.get(url)
         .then((responce) => {
-          console.log(responce[0]);
-
           resolve(responce[0]);
         })
         .catch(() => {
@@ -109,6 +107,40 @@ class APIManager {
       })
       .catch((error) => console.log(error));
   };
+
+  loadDataPromise = () => {
+    return new Promise((resolve) => {
+      const peoplePromise = this.getPeople();
+      const quotePromise = this.getQuote();
+      const pokePromise = this.getPoke();
+      const aboutPromise = this.getAbout();
+
+      const gotAll = Promise.all([
+        peoplePromise,
+        quotePromise,
+        pokePromise,
+        aboutPromise,
+      ]);
+      gotAll
+        .then((promiseResults) => {
+          let [people, quote, poke, about] = promiseResults;
+
+          this.data = {
+            mainUser: people[0],
+            friends: people[1],
+            quote: quote,
+            poke: poke,
+            about: about,
+          };
+          console.log(this.data);
+        })
+        .then(() => {
+          console.log("promise completed successfully");
+          resolve(this.data);
+        });
+    });
+  };
+
   constructor() {
     this.data = {};
     this.loadData();

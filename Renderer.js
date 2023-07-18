@@ -42,5 +42,13 @@ class Renderer {
     this.renderPoke(data.poke);
     this.renderAbout({ about: data.about });
   };
-  constructor() {}
+  constructor() {
+    Handlebars.registerHelper("capitalizeWords", function (str) {
+      const words = str.split(" ");
+      const capitalizedWords = words.map(
+        (word) => word.charAt(0).toUpperCase() + word.slice(1)
+      );
+      return capitalizedWords.join(" ");
+    });
+  }
 }
