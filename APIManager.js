@@ -1,5 +1,3 @@
-//This is the class that will manage all your APIs
-
 class APIManager {
   fillMainUser = (peopleResponce) => {
     const person = peopleResponce.results[0];
@@ -22,65 +20,37 @@ class APIManager {
     return friends;
   };
 
-  getPeople = () => {
+  getPeople = async () => {
     const peopleCount = 7;
     const urlPeople = `https://randomuser.me/api/?results=${peopleCount}`;
-    return new Promise((resolve, reject) => {
-      $.get(urlPeople)
-        .then((responce) => {
-          const people = [
-            this.fillMainUser(responce),
-            this.fillFriends(responce),
-          ];
-          resolve(people);
-        })
-        .catch(() => reject("!!! getPeople failed !!! "));
-    });
+    const response = await $.get(urlPeople);
+    return [this.fillMainUser(response), this.fillFriends(response)];
   };
 
-  getQuote = () => {
+  getQuote = async () => {
     const urlQuote = "https://api.kanye.rest";
-    return new Promise((resolve, reject) => {
-      $.get(urlQuote)
-        .then((responce) => {
-          resolve(responce.quote);
-        })
-        .catch(() => {
-          reject("!!! getQuote failed !!! ");
-        });
-    });
+    const response = await $.get(urlQuote);
+    return response.quote;
   };
 
-  getPoke = () => {
+  getPoke = async () => {
     const maxId = 949;
     const getRndId = (max) => Math.floor(Math.random() * max) || 1;
     const urlPoke = `https://pokeapi.co/api/v2/pokemon/${getRndId(maxId)}`;
-    return new Promise((resolve, reject) => {
-      $.get(urlPoke)
-        .then((responce) => {
-          resolve({
-            name: responce.name,
-            imageUrl: responce.sprites.front_default,
-          });
-        })
-        .catch(() => reject("!!! getPoke !!! "));
-    });
+    const response = await $.get(urlPoke);
+    return {
+      name: response.name,
+      imageUrl: response.sprites.front_default,
+    };
   };
 
-  getAbout = () => {
+  getAbout = async () => {
     const url = "https://baconipsum.com/api/?type=meat-and-filler&paras=1";
-    return new Promise((resolve, reject) => {
-      $.get(url)
-        .then((responce) => {
-          resolve(responce[0]);
-        })
-        .catch(() => {
-          reject("!!! getAbout failed !!! ");
-        });
-    });
+    const response = await $.get(url);
+    return response;
   };
 
-  loadData = () => {
+  loadData = async () => {
     const peoplePromise = this.getPeople();
     const quotePromise = this.getQuote();
     const pokePromise = this.getPoke();
@@ -92,53 +62,21 @@ class APIManager {
       pokePromise,
       aboutPromise,
     ]);
-    gotAll
-      .then((promiseResults) => {
-        let [people, quote, poke, about] = promiseResults;
+    try {
+      const promiseResults = await gotAll;
+      let [people, quote, poke, about] = promiseResults;
 
-        this.data = {
-          mainUser: people[0],
-          friends: people[1],
-          quote: quote,
-          poke: poke,
-          about: about,
-        };
-        console.log(this.data);
-      })
-      .catch((error) => console.log(error));
-  };
-
-  loadDataPromise = () => {
-    return new Promise((resolve) => {
-      const peoplePromise = this.getPeople();
-      const quotePromise = this.getQuote();
-      const pokePromise = this.getPoke();
-      const aboutPromise = this.getAbout();
-
-      const gotAll = Promise.all([
-        peoplePromise,
-        quotePromise,
-        pokePromise,
-        aboutPromise,
-      ]);
-      gotAll
-        .then((promiseResults) => {
-          let [people, quote, poke, about] = promiseResults;
-
-          this.data = {
-            mainUser: people[0],
-            friends: people[1],
-            quote: quote,
-            poke: poke,
-            about: about,
-          };
-          console.log(this.data);
-        })
-        .then(() => {
-          console.log("promise completed successfully");
-          resolve(this.data);
-        });
-    });
+      this.data = {
+        mainUser: people[0],
+        friends: people[1],
+        quote: quote,
+        poke: poke,
+        about: about,
+      };
+      console.log(this.data);
+    } catch (error) {
+      return console.log(error);
+    }
   };
 
   constructor() {
