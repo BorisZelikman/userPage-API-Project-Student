@@ -9,6 +9,7 @@ const renderer = new Renderer();
 
 const loadData = () => {
   apiManager.loadData();
+  renderer.main(apiManager.data);
 };
 const renderData = () => {
   renderer.main(apiManager.data);

@@ -34,22 +34,80 @@ class APIManager {
           ];
           resolve(people);
         })
-        .catch((error) => reject("!!! getMainUser !!! " + error));
+        .catch(() => reject("!!! getPeople failed !!! "));
+    });
+  };
+
+  getQuote = () => {
+    const urlQuote = "https://api.kanye.rest";
+    return new Promise((resolve, reject) => {
+      $.get(urlQuote)
+        .then((responce) => {
+          resolve(responce.quote);
+        })
+        .catch(() => {
+          reject("!!! getQuote failed !!! ");
+        });
+    });
+  };
+
+  getPoke = () => {
+    const maxId = 949;
+    const getRndId = (max) => Math.floor(Math.random() * max) || 1;
+    const urlPoke = `https://pokeapi.co/api/v2/pokemon/${getRndId(maxId)}`;
+    return new Promise((resolve, reject) => {
+      $.get(urlPoke)
+        .then((responce) => {
+          resolve({
+            name: responce.name,
+            imageUrl: responce.sprites.front_default,
+          });
+        })
+        .catch(() => reject("!!! getPoke !!! "));
+    });
+  };
+
+  getAbout = () => {
+    const url = "https://baconipsum.com/api/?type=meat-and-filler&paras=1";
+    return new Promise((resolve, reject) => {
+      $.get(url)
+        .then((responce) => {
+          console.log(responce[0]);
+
+          resolve(responce[0]);
+        })
+        .catch(() => {
+          reject("!!! getAbout failed !!! ");
+        });
     });
   };
 
   loadData = () => {
-    let peoplePromise = this.getPeople();
-    const gotAll = Promise.all([peoplePromise]);
-    gotAll.then((promiseResults) => {
-      let [people] = promiseResults;
+    const peoplePromise = this.getPeople();
+    const quotePromise = this.getQuote();
+    const pokePromise = this.getPoke();
+    const aboutPromise = this.getAbout();
 
-      this.data = {
-        mainUser: people[0],
-        friends: people[1],
-      };
-      console.log(this.data);
-    });
+    const gotAll = Promise.all([
+      peoplePromise,
+      quotePromise,
+      pokePromise,
+      aboutPromise,
+    ]);
+    gotAll
+      .then((promiseResults) => {
+        let [people, quote, poke, about] = promiseResults;
+
+        this.data = {
+          mainUser: people[0],
+          friends: people[1],
+          quote: quote,
+          poke: poke,
+          about: about,
+        };
+        console.log(this.data);
+      })
+      .catch((error) => console.log(error));
   };
   constructor() {
     this.data = {};

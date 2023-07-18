@@ -39,6 +39,7 @@
         <div class="friends-container"></div>
       </div>
       <div class="buttons">
+        <button id="btnGenerate">Generate User</button>
         <button id="btnLoad">Load User Data</button>
         <button id="btnDisplay">Display User</button>
       </div>
@@ -58,6 +59,20 @@
           <li>{{firstName}} {{lastName}}</li>
         {{/each}}
       </ul>
+    </script>
+
+    <script id="quote-template" type="text/x-handlebars-template">
+      <p>Favorite quote:</p>
+      <h4>"{{quote}}"</h4>
+    </script>
+
+    <script id="poke-template" type="text/x-handlebars-template">
+      <img id="pokemon-image" src={{imageUrl}} alt="" />
+      <p id="pokemon-text">Favorite pokemon: {{name}}</p>
+    </script>
+
+    <script id="about-template" type="text/x-handlebars-template">
+      <p class="meat-text">About me:<br />{{about}}</p>
     </script>
 
     <script src="APIManager.js"></script>
