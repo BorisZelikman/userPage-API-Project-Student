@@ -14,32 +14,28 @@ const generateUser = async function () {
   console.log("rendered");
 };
 
-const savePage = (data, fileName) => {
-  let a = document.createElement("a");
-  let file = new Blob([JSON.stringify(data)], { type: "application/json" });
-  a.href = URL.createObjectURL(file);
-  a.download = fileName;
-  a.click();
+const savePage = (data) => {
+  const jsonData = JSON.stringify(data);
+  localStorage.setItem("pageData", jsonData);
 };
 
 const loadPage = () => {
-  fetch("saved-data/page.json")
-    .then((response) => response.json())
-    .then((data) => {
-      apiManager.data = data;
-      renderData();
-    })
-    .catch((error) => {
-      console.error("Error reading file:", error);
-    });
+  const jsonData = localStorage.getItem("pageData");
+  if (jsonData) {
+    const data = JSON.parse(jsonData);
+
+    apiManager.data = data;
+    renderData();
+  } else {
+    console.log("No page data found.");
+  }
 };
 $("button").on("click", function (sender) {
   if (sender.target.id === "btnGenerate") generateUser();
   if (sender.target.id === "btnLoad") loadData();
   if (sender.target.id === "btnDisplay") renderData();
   if (sender.target.id === "btnLoadPage") loadPage();
-  if (sender.target.id === "btnSavePage")
-    savePage(apiManager.data, "page.json");
+  if (sender.target.id === "btnSavePage") savePage(apiManager.data);
 });
 
 generateUser();
