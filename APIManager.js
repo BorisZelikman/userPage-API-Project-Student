@@ -1,5 +1,5 @@
 class APIManager {
-  fillMainUser = (peopleResponce) => {
+  #fillMainUser = (peopleResponce) => {
     const person = peopleResponce.results[0];
     const mainUserData = {
       picture: person.picture.large,
@@ -11,7 +11,7 @@ class APIManager {
     return mainUserData;
   };
 
-  fillFriends = (peopleResponce) => {
+  #fillFriends = (peopleResponce) => {
     const friends = peopleResponce.results.map(({ name }) => ({
       firstName: name.first,
       lastName: name.last,
@@ -20,20 +20,20 @@ class APIManager {
     return friends;
   };
 
-  getPeople = async () => {
+  #getPeople = async () => {
     const peopleCount = 7;
     const urlPeople = `https://randomuser.me/api/?results=${peopleCount}`;
     const response = await $.get(urlPeople);
-    return [this.fillMainUser(response), this.fillFriends(response)];
+    return [this.#fillMainUser(response), this.#fillFriends(response)];
   };
 
-  getQuote = async () => {
+  #getQuote = async () => {
     const urlQuote = "https://api.kanye.rest";
     const response = await $.get(urlQuote);
     return response.quote;
   };
 
-  getPoke = async () => {
+  #getPoke = async () => {
     const maxId = 949;
     const getRndId = (max) => Math.floor(Math.random() * max) || 1;
     const urlPoke = `https://pokeapi.co/api/v2/pokemon/${getRndId(maxId)}`;
@@ -44,17 +44,17 @@ class APIManager {
     };
   };
 
-  getAbout = async () => {
+  #getAbout = async () => {
     const url = "https://baconipsum.com/api/?type=meat-and-filler&paras=1";
     const response = await $.get(url);
     return response;
   };
 
   loadData = async () => {
-    const peoplePromise = this.getPeople();
-    const quotePromise = this.getQuote();
-    const pokePromise = this.getPoke();
-    const aboutPromise = this.getAbout();
+    const peoplePromise = this.#getPeople();
+    const quotePromise = this.#getQuote();
+    const pokePromise = this.#getPoke();
+    const aboutPromise = this.#getAbout();
 
     const gotAll = Promise.all([
       peoplePromise,
@@ -66,49 +66,60 @@ class APIManager {
       const promiseResults = await gotAll;
       let [people, quote, poke, about] = promiseResults;
 
-      this.data = {
+      this.#data = {
         mainUser: people[0],
         friends: people[1],
         quote: quote,
         poke: poke,
         about: about,
       };
-      console.log(this.data);
+      console.log(this.#data);
     } catch (error) {
       return console.log(error);
     }
   };
 
   savePage = () => {
-    let newKey = Object.keys(this.storedUsers).length;
-    this.storedUsers[newKey] = this.data;
-    console.log(this.storedUsers);
+    if (Object.values(this.storedPages).includes(this.data)) return;
 
-    const jsonData = JSON.stringify(this.storedUsers);
+    let newKey = Object.keys(this.storedPages).length;
+    this.#storedPages[newKey] = this.data;
+
+    const jsonData = JSON.stringify(this.storedPages);
     localStorage.setItem("users-data", jsonData);
-
-    this.settings.keys = Object.keys(this.storedUsers);
-    this.settings.stored = this.settings.keys.length > 0;
   };
 
-  loadStoredUsers = () => {
+  #loadPagesFromStorage = () => {
     const jsonData = localStorage.getItem("users-data");
     if (jsonData) {
-      this.storedUsers = JSON.parse(jsonData);
-
-      this.settings.keys = Object.keys(this.storedUsers);
-      this.settings.stored = this.settings.keys.length > 0;
-      this.settings.selectedValue ||= 0;
-    } else {
-      console.log("users-data local storage not found.");
-    }
+      this.#storedPages = JSON.parse(jsonData);
+    } else console.log("users-data local storage not found.");
   };
 
+  loadSelectedPage = (num) => {
+    this.#data = this.storedPages[num];
+  };
+
+  get storageInfo() {
+    return {
+      stored: Object.keys(this.storedPages).length > 0,
+      keys: Object.keys(this.storedPages),
+    };
+  }
+
+  get storedPages() {
+    return this.#storedPages;
+  }
+
+  get data() {
+    return this.#data;
+  }
+
+  #storedPages = {};
+  #data = {};
+
   constructor() {
-    this.data = {};
-    this.storedUsers = {};
-    this.settings = { stored: false, selectedValue: "", keys: [] };
     this.loadData();
-    this.loadStoredUsers();
+    this.#loadPagesFromStorage();
   }
 }

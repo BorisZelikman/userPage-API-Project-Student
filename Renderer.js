@@ -49,6 +49,7 @@ class Renderer {
     this.renderAbout({ about: data.about });
     this.renderLoadFromStorage(settings);
   };
+
   constructor() {
     Handlebars.registerHelper("capitalizeWords", function (str) {
       const words = str.split(" ");

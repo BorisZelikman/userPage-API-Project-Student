@@ -4,19 +4,12 @@ const renderer = new Renderer();
 const generateUser = async function () {
   apiManager
     .loadData()
-    .then(() => renderer.renderAll(apiManager.data, apiManager.settings));
-};
-
-const loadPage = () => {
-  apiManager.settings.selectedValue = $("#savedPagesSelector").val();
-  const num = apiManager.settings.selectedValue;
-  apiManager.data = apiManager.storedUsers[num];
-  renderer.renderAll(apiManager.data, apiManager.settings);
+    .then(() => renderer.renderAll(apiManager.data, apiManager.storageInfo));
 };
 
 const savePage = () => {
   apiManager.savePage();
-  renderer.renderAll(apiManager.data, apiManager.settings);
+  renderer.renderAll(apiManager.data, apiManager.storageInfo);
 };
 
 $("button").on("click", function (sender) {
@@ -25,11 +18,9 @@ $("button").on("click", function (sender) {
 });
 
 $(document).on("click", "#btnLoadPage", function (sender) {
-  loadPage();
-});
-
-$(document).on("change", "#savedPagesSelector", function (event) {
-  apiManager.settings.selectedValue = event.target.value;
+  const num = $("#savedPagesSelector").val();
+  apiManager.loadSelectedPage(num);
+  renderer.renderAll(apiManager.data, apiManager.storageInfo);
 });
 
 generateUser();
