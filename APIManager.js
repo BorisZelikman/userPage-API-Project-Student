@@ -79,8 +79,36 @@ class APIManager {
     }
   };
 
+  savePage = () => {
+    let newKey = Object.keys(this.storedUsers).length;
+    this.storedUsers[newKey] = this.data;
+    console.log(this.storedUsers);
+
+    const jsonData = JSON.stringify(this.storedUsers);
+    localStorage.setItem("users-data", jsonData);
+
+    this.settings.keys = Object.keys(this.storedUsers);
+    this.settings.stored = this.settings.keys.length > 0;
+  };
+
+  loadStoredUsers = () => {
+    const jsonData = localStorage.getItem("users-data");
+    if (jsonData) {
+      this.storedUsers = JSON.parse(jsonData);
+
+      this.settings.keys = Object.keys(this.storedUsers);
+      this.settings.stored = this.settings.keys.length > 0;
+      this.settings.selectedValue ||= 0;
+    } else {
+      console.log("users-data local storage not found.");
+    }
+  };
+
   constructor() {
     this.data = {};
+    this.storedUsers = {};
+    this.settings = { stored: false, selectedValue: "", keys: [] };
     this.loadData();
+    this.loadStoredUsers();
   }
 }

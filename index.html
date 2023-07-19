@@ -41,12 +41,20 @@
       <div class="buttons">
         <button id="btnGenerate">Generate User</button>
         <button id="btnSavePage">Save User Page</button>
-        <button id="btnLoadPage">Load User Page</button>
-        <select name="" id="">
-          <option value="">123</option>
-        </select>
+        <div class="load-container"></div>
       </div>
     </div>
+
+    <script id="load-template" type="text/x-handlebars-template">
+      {{#if stored}}
+        <button id="btnLoadPage">Load User Page</button>
+        <select name="" id="savedPagesSelector">
+          {{#each keys}}
+            <option value="{{this}}">{{this}}</option>
+          {{/each}}
+        </select>
+      {{/if}}
+    </script>
 
     <script id="user-template" type="text/x-handlebars-template">
       <img id="profile-pic" src={{picture}} alt="" />

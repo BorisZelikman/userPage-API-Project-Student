@@ -35,12 +35,19 @@ class Renderer {
       .append(this.templateHtml("#about-template", aboutData));
   };
 
-  main = (data) => {
+  renderLoadFromStorage = (loadInfo) => {
+    $(".load-container")
+      .empty()
+      .append(this.templateHtml("#load-template", loadInfo));
+  };
+
+  renderAll = (data, settings) => {
     this.renderMainUser(data.mainUser);
     this.renderFriends({ friends: data.friends });
     this.renderQuote({ quote: data.quote });
     this.renderPoke(data.poke);
     this.renderAbout({ about: data.about });
+    this.renderLoadFromStorage(settings);
   };
   constructor() {
     Handlebars.registerHelper("capitalizeWords", function (str) {
