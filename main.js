@@ -8,6 +8,7 @@ const generateUser = async function () {
 };
 
 const loadPage = () => {
+  apiManager.settings.selectedValue = $("#savedPagesSelector").val();
   const num = apiManager.settings.selectedValue;
   apiManager.data = apiManager.storedUsers[num];
   renderer.renderAll(apiManager.data, apiManager.settings);
