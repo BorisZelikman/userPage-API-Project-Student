@@ -23,6 +23,12 @@ class Renderer {
       .append(this.templateHtml("#quote-template", quoteData));
   };
 
+  renderGyphy = (gyphyData) => {
+    $(".gyphy-container")
+      .empty()
+      .append(this.templateHtml("#gyphy-template", gyphyData));
+  };
+
   renderPoke = (pokeData) => {
     $(".pokemon-container")
       .empty()
@@ -45,6 +51,7 @@ class Renderer {
     this.renderMainUser(data.mainUser);
     this.renderFriends({ friends: data.friends });
     this.renderQuote({ quote: data.quote });
+    this.renderGyphy(data.gyphy);
     this.renderPoke(data.poke);
     this.renderAbout({ about: data.about });
     this.renderLoadFromStorage(settings);

@@ -33,6 +33,16 @@ class APIManager {
     return response.quote;
   };
 
+  #getGyphy = async (searchStr) => {
+    console.log(searchStr);
+    const api_key = "lCfAKpgxCTeeIfHELqrnDkDzsjGwjmns";
+    const urlGyphy = `http://api.giphy.com/v1/gifs/search?q=${searchStr}&api_key=${api_key}&limit=1`;
+    const response = await $.get(urlGyphy);
+    return {
+      imageUrl: response.data[0].images.downsized.url,
+    };
+  };
+
   #getPoke = async () => {
     const maxId = 949;
     const getRndId = (max) => Math.floor(Math.random() * max) || 1;
@@ -54,26 +64,31 @@ class APIManager {
     const peoplePromise = this.#getPeople();
     const quotePromise = this.#getQuote();
     const pokePromise = this.#getPoke();
+    const gyphyPromise = pokePromise.then((result) => {
+      return this.#getGyphy(result.name);
+    });
+
     const aboutPromise = this.#getAbout();
 
     const gotAll = Promise.all([
       peoplePromise,
       quotePromise,
       pokePromise,
+      gyphyPromise,
       aboutPromise,
     ]);
     try {
       const promiseResults = await gotAll;
-      let [people, quote, poke, about] = promiseResults;
+      let [people, quote, poke, gyphy, about] = promiseResults;
 
       this.#data = {
         mainUser: people[0],
         friends: people[1],
         quote: quote,
         poke: poke,
+        gyphy: gyphy,
         about: about,
       };
-      console.log(this.#data);
     } catch (error) {
       return console.log(error);
     }

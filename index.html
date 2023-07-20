@@ -31,6 +31,7 @@
       <div class="user-container"></div>
       <div class="quote-container"></div>
       <div class="content-container">
+        <div class="gyphy-container"></div>
         <div class="pokemon-container"></div>
         <div class="meat-container"></div>
       </div>
@@ -80,6 +81,10 @@
     <script id="poke-template" type="text/x-handlebars-template">
       <img id="pokemon-image" src={{imageUrl}} alt="" />
       <p id="pokemon-text">Favorite pokemon: {{capitalizeWords name}}</p>
+    </script>
+
+    <script id="gyphy-template" type="text/x-handlebars-template">
+      <img id="gyphy-image" src={{imageUrl}} alt="" />
     </script>
 
     <script id="about-template" type="text/x-handlebars-template">

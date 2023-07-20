@@ -82,8 +82,8 @@ ul {
 
 .buttons {
   position: fixed;
-  bottom: 1vw;
-  left: 1vw;
+  top: 1vw;
+  right: 1vw;
 }
 
 button {
@@ -120,6 +120,14 @@ button {
   align-items: center;
   justify-self: baseline;
   border-bottom: 1px solid #2c3e50;
+}
+
+#gyphy-image {
+  height: 250px;
+}
+
+.gyphy-container {
+  display: inline;
 }
 
 .load-container {
